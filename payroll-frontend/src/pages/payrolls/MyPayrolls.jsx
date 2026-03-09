@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  DASHBOARD_ROUTE,
-  PAYROLL_CREATE_ROUTE,
-  getPayrollDetailRoute
-} from '../../constants/routes';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { getPayrolls } from '../../services/payrollService';
+import { getMyPayrolls } from '../../services/payrollService';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { formatDate } from '../../utils/formatDate';
 
-function PayrollList() {
+function MyPayrolls() {
   const [payrolls, setPayrolls] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const { logout, user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,14 +18,14 @@ function PayrollList() {
     const loadPayrolls = async () => {
       try {
         setError('');
-        const data = await getPayrolls();
+        const data = await getMyPayrolls();
 
         if (isMounted) {
           setPayrolls(data);
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.response?.data?.message || 'No se pudieron cargar las liquidaciones');
+          setError(err.response?.data?.message || 'No se pudieron cargar tus liquidaciones');
         }
       } finally {
         if (isMounted) {
@@ -51,38 +47,32 @@ function PayrollList() {
   };
 
   if (isLoading) {
-    return <p>Cargando liquidaciones...</p>;
+    return <p>Cargando tus liquidaciones...</p>;
   }
 
   return (
     <main>
-      <h1>Liquidaciones</h1>
+      <h1>Mis liquidaciones</h1>
       <p>Usuario: {user?.email}</p>
-      <p>Rol: {user?.role}</p>
-      <Link to={DASHBOARD_ROUTE}>Volver al dashboard</Link>
-      <Link to={PAYROLL_CREATE_ROUTE}>Nueva liquidacion</Link>
       <button type="button" onClick={handleLogout}>
         Cerrar sesion
       </button>
 
       {error && <p>{error}</p>}
 
-      {!error && payrolls.length === 0 && <p>No hay liquidaciones registradas.</p>}
+      {!error && payrolls.length === 0 && (
+        <p>No tenes liquidaciones registradas por el momento.</p>
+      )}
 
       {payrolls.length > 0 && (
         <section>
           {payrolls.map((payroll) => (
             <article key={payroll.id}>
-              <h2>
-                {payroll.first_name} {payroll.last_name}
-              </h2>
-              <p>ID: {payroll.id}</p>
-              <p>Periodo: {payroll.period}</p>
-              <p>Puesto: {payroll.position}</p>
-              <p>Bruto: {formatCurrency(payroll.gross_salary)}</p>
+              <h2>Periodo: {payroll.period}</h2>
+              <p>Fecha: {formatDate(payroll.created_at)}</p>
+              <p>Sueldo bruto: {formatCurrency(payroll.gross_salary)}</p>
               <p>Descuentos: {formatCurrency(payroll.deductions)}</p>
-              <p>Neto: {formatCurrency(payroll.net_salary)}</p>
-              <Link to={getPayrollDetailRoute(payroll.id)}>Ver detalle</Link>
+              <p>Sueldo neto: {formatCurrency(payroll.net_salary)}</p>
             </article>
           ))}
         </section>
@@ -91,4 +81,4 @@ function PayrollList() {
   );
 }
 
-export default PayrollList;
+export default MyPayrolls;
