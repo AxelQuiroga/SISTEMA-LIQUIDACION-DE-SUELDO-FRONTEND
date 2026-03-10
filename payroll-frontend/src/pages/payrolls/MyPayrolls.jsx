@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getMyPayrolls } from '../../services/payrollService';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -9,8 +8,7 @@ function MyPayrolls() {
   const [payrolls, setPayrolls] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -41,38 +39,42 @@ function MyPayrolls() {
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
-
   if (isLoading) {
-    return <p>Cargando tus liquidaciones...</p>;
+    return <p className="status status--info">Cargando tus liquidaciones...</p>;
   }
 
   return (
-    <main>
-      <h1>Mis liquidaciones</h1>
-      <p>Usuario: {user?.email}</p>
-      <button type="button" onClick={handleLogout}>
-        Cerrar sesion
-      </button>
+    <main className="page">
+      <section className="page-header">
+        <div>
+          <p className="eyebrow">Portal del empleado</p>
+          <h1>Mis liquidaciones</h1>
+        </div>
+        <p className="page-copy">Usuario: {user?.email}</p>
+      </section>
 
-      {error && <p>{error}</p>}
+      {error && <p className="status status--error">{error}</p>}
 
       {!error && payrolls.length === 0 && (
-        <p>No tenes liquidaciones registradas por el momento.</p>
+        <p className="empty-state">No tenes liquidaciones registradas por el momento.</p>
       )}
 
       {payrolls.length > 0 && (
-        <section>
+        <section className="card-grid">
           {payrolls.map((payroll) => (
-            <article key={payroll.id}>
-              <h2>Periodo: {payroll.period}</h2>
-              <p>Fecha: {formatDate(payroll.created_at)}</p>
-              <p>Sueldo bruto: {formatCurrency(payroll.gross_salary)}</p>
-              <p>Descuentos: {formatCurrency(payroll.deductions)}</p>
-              <p>Sueldo neto: {formatCurrency(payroll.net_salary)}</p>
+            <article className="surface entity-card" key={payroll.id}>
+              <div className="entity-card__header">
+                <div>
+                  <p className="entity-card__eyebrow">Recibo #{payroll.id}</p>
+                  <h2>Periodo {payroll.period}</h2>
+                </div>
+              </div>
+              <div className="detail-grid">
+                <p><strong>Fecha:</strong> {formatDate(payroll.created_at)}</p>
+                <p><strong>Sueldo bruto:</strong> {formatCurrency(payroll.gross_salary)}</p>
+                <p><strong>Descuentos:</strong> {formatCurrency(payroll.deductions)}</p>
+                <p><strong>Sueldo neto:</strong> {formatCurrency(payroll.net_salary)}</p>
+              </div>
             </article>
           ))}
         </section>

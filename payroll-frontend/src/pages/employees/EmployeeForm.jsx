@@ -57,6 +57,7 @@ function EmployeeForm() {
   const navigate = useNavigate();
   const { employeeId } = useParams();
   const isEditMode = Boolean(employeeId);
+  const showUserIdField = isEditMode;
 
   useEffect(() => {
     if (!isEditMode) {
@@ -126,89 +127,71 @@ function EmployeeForm() {
   };
 
   if (isLoadingEmployee) {
-    return <p>Cargando empleado...</p>;
+    return <p className="status status--info">Cargando empleado...</p>;
   }
 
   return (
-    <main>
-      <h1>{isEditMode ? 'Editar empleado' : 'Nuevo empleado'}</h1>
-      <p>Usuario: {user?.email}</p>
-      <p>Rol: {user?.role}</p>
-      <Link to={EMPLOYEES_ROUTE}>Volver al listado</Link>
+    <main className="page">
+      <section className="page-header">
+        <div>
+          <p className="eyebrow">Administracion</p>
+          <h1>{isEditMode ? 'Editar empleado' : 'Nuevo empleado'}</h1>
+        </div>
+        <p className="page-copy">Operacion disponible para rol {user?.role}.</p>
+      </section>
 
-      {error && <p>{error}</p>}
+      <div className="page-actions">
+        <Link className="button-link button-link--ghost" to={EMPLOYEES_ROUTE}>Volver al listado</Link>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="user_id"
-          type="number"
-          placeholder="User ID (opcional)"
-          value={formData.user_id}
-          onChange={handleChange}
-        />
-        <input
-          name="first_name"
-          type="text"
-          placeholder="Nombre"
-          value={formData.first_name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="last_name"
-          type="text"
-          placeholder="Apellido"
-          value={formData.last_name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="dni"
-          type="text"
-          placeholder="DNI"
-          value={formData.dni}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="hire_date"
-          type="date"
-          value={formData.hire_date}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="position"
-          type="text"
-          placeholder="Puesto"
-          value={formData.position}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="base_salary"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="Sueldo base"
-          value={formData.base_salary}
-          onChange={handleChange}
-          required
-        />
+      {error && <p className="status status--error">{error}</p>}
 
-        {isEditMode && (
-          <label>
+      <form className="surface form-shell form-grid" onSubmit={handleSubmit}>
+        {showUserIdField && (
+          <label className="field field--full">
+            <span>ID de usuario (opcional)</span>
             <input
-              name="active"
-              type="checkbox"
-              checked={formData.active}
+              name="user_id"
+              type="number"
+              placeholder="ID de usuario"
+              value={formData.user_id}
               onChange={handleChange}
             />
-            Empleado activo
+          </label>
+        )}
+        <label className="field">
+          <span>Nombre</span>
+          <input name="first_name" type="text" placeholder="Nombre" value={formData.first_name} onChange={handleChange} required />
+        </label>
+        <label className="field">
+          <span>Apellido</span>
+          <input name="last_name" type="text" placeholder="Apellido" value={formData.last_name} onChange={handleChange} required />
+        </label>
+        <label className="field">
+          <span>DNI</span>
+          <input name="dni" type="text" placeholder="DNI" value={formData.dni} onChange={handleChange} required />
+        </label>
+        <label className="field">
+          <span>Fecha de ingreso</span>
+          <input name="hire_date" type="date" value={formData.hire_date} onChange={handleChange} required />
+        </label>
+        <label className="field">
+          <span>Puesto</span>
+          <input name="position" type="text" placeholder="Puesto" value={formData.position} onChange={handleChange} required />
+        </label>
+        <label className="field">
+          <span>Sueldo base</span>
+          <input name="base_salary" type="number" min="0" step="0.01" placeholder="Sueldo base" value={formData.base_salary} onChange={handleChange} required />
+        </label>
+
+        {isEditMode && (
+          <label className="field field--checkbox field--full">
+            <input name="active" type="checkbox" checked={formData.active} onChange={handleChange} />
+            <span>Empleado activo</span>
           </label>
         )}
 
-        <button type="submit" disabled={isSubmitting}>
+        <button className="field--full" type="submit" disabled={isSubmitting}>
           {isSubmitting
             ? isEditMode
               ? 'Guardando cambios...'

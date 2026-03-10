@@ -1,59 +1,70 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
-import {
-  clearSession,
-  getStoredToken,
-  getStoredUser,
-  login as loginRequest,
-  persistSession
-} from '../services/authService';
+import { useEffect, useMemo, useState } from 'react';
+import { AUTH_UNAUTHORIZED_EVENT } from '../constants/events';
+import { AuthContext } from './authContextBase';
+import { clearSession, getStoredSession, login as loginRequest, persistSession } from '../services/authService';
 
-export const AuthContext = createContext(null);
+const getInitialAuthState = () => {
+  const { token, user } = getStoredSession();
+
+  return {
+    token,
+    user,
+    isLoading: false
+  };
+};
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [authState, setAuthState] = useState(getInitialAuthState);
 
   useEffect(() => {
-    const storedToken = getStoredToken();
-    const storedUser = getStoredUser();
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(storedUser);
-    } else {
+    const handleUnauthorized = () => {
       clearSession();
-    }
+      setAuthState({
+        token: null,
+        user: null,
+        isLoading: false
+      });
+    };
 
-    setIsLoading(false);
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    };
   }, []);
 
   const login = async (credentials) => {
     const session = await loginRequest(credentials);
 
     persistSession(session);
-    setToken(session.token);
-    setUser(session.user);
+    setAuthState({
+      token: session.token,
+      user: session.user,
+      isLoading: false
+    });
 
     return session;
   };
 
   const logout = () => {
     clearSession();
-    setToken(null);
-    setUser(null);
+    setAuthState({
+      token: null,
+      user: null,
+      isLoading: false
+    });
   };
 
   const value = useMemo(
     () => ({
-      user,
-      token,
-      isLoading,
-      isAuthenticated: Boolean(token && user),
+      user: authState.user,
+      token: authState.token,
+      isLoading: authState.isLoading,
+      isAuthenticated: Boolean(authState.token && authState.user),
       login,
       logout
     }),
-    [isLoading, token, user]
+    [authState]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

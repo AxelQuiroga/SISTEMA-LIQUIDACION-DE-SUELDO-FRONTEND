@@ -1,29 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { EMPLOYEES_ROUTE, PAYROLLS_ROUTE } from '../../constants/routes';
 import { useAuth } from '../../hooks/useAuth';
 
 function Dashboard() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const canManageEmployees = ['admin', 'superadmin'].includes(user?.role);
-  const canManagePayrolls = ['admin', 'contable', 'superadmin'].includes(user?.role);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
+  const { user } = useAuth();
 
   return (
-    <main>
-      <h1>Dashboard</h1>
-      <p>Sesion iniciada correctamente.</p>
-      <p>Usuario: {user?.email}</p>
-      <p>Rol: {user?.role}</p>
-      {canManageEmployees && <Link to={EMPLOYEES_ROUTE}>Ver empleados</Link>}
-      {canManagePayrolls && <Link to={PAYROLLS_ROUTE}>Ver liquidaciones</Link>}
-      <button type="button" onClick={handleLogout}>
-        Cerrar sesion
-      </button>
+    <main className="page">
+      <section className="page-header">
+        <div>
+          <p className="eyebrow">Resumen</p>
+          <h1>Dashboard</h1>
+        </div>
+        <p className="page-copy">Sesion activa para {user?.email}.</p>
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="surface metric-card">
+          <span className="metric-card__label">Rol</span>
+          <strong>{user?.role}</strong>
+          <p>Los accesos del menu superior se adaptan automaticamente a este perfil.</p>
+        </article>
+        <article className="surface metric-card">
+          <span className="metric-card__label">Estado</span>
+          <strong>Operativo</strong>
+          <p>El frontend ya consume autenticacion, empleados y liquidaciones del backend.</p>
+        </article>
+        <article className="surface metric-card">
+          <span className="metric-card__label">Siguiente accion</span>
+          <strong>Navega por modulos</strong>
+          <p>Usa la barra superior para pasar entre empleados, liquidaciones o recibos propios.</p>
+        </article>
+      </section>
     </main>
   );
 }

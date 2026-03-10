@@ -25,7 +25,7 @@ function AppRouter() {
       <Routes>
         <Route path="/" element={<Navigate to={LOGIN_ROUTE} replace />} />
         <Route path={LOGIN_ROUTE} element={<Login />} />
-        <Route element={<ProtectedRoute allowedRoles={['admin', 'contable', 'superadmin']} />}>
+        <Route element={<ProtectedRoute allowedRoles={['admin', 'accountant', 'superadmin']} />}>
           <Route path={DASHBOARD_ROUTE} element={<Dashboard />} />
           <Route path={PAYROLLS_ROUTE} element={<PayrollList />} />
           <Route path={PAYROLL_CREATE_ROUTE} element={<PayrollForm />} />

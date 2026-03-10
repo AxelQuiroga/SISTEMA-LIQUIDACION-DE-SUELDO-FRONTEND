@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getDefaultRouteByRole, LOGIN_ROUTE } from '../../constants/routes';
+import AppLayout from '../layout/AppLayout';
 
 function ProtectedRoute({ allowedRoles }) {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -18,7 +19,11 @@ function ProtectedRoute({ allowedRoles }) {
     return <Navigate to={getDefaultRouteByRole(user?.role)} replace />;
   }
 
-  return <Outlet />;
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  );
 }
 
 export default ProtectedRoute;

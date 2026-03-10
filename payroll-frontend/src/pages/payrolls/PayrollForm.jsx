@@ -85,87 +85,61 @@ function PayrollForm() {
   };
 
   if (isLoadingEmployees) {
-    return <p>Cargando empleados...</p>;
+    return <p className="status status--info">Cargando empleados...</p>;
   }
 
   return (
-    <main>
-      <h1>Nueva liquidacion</h1>
-      <p>Usuario: {user?.email}</p>
-      <p>Rol: {user?.role}</p>
-      <Link to={PAYROLLS_ROUTE}>Volver al listado</Link>
+    <main className="page">
+      <section className="page-header">
+        <div>
+          <p className="eyebrow">Liquidaciones</p>
+          <h1>Nueva liquidacion</h1>
+        </div>
+        <p className="page-copy">Operacion disponible para rol {user?.role}.</p>
+      </section>
+      <div className="page-actions">
+        <Link className="button-link button-link--ghost" to={PAYROLLS_ROUTE}>Volver al listado</Link>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <p className="status status--error">{error}</p>}
 
       {employees.length === 0 ? (
-        <p>No hay empleados activos disponibles para liquidar.</p>
+        <p className="empty-state">No hay empleados activos disponibles para liquidar.</p>
       ) : (
-        <form onSubmit={handleSubmit}>
-          <select
-            name="employee_id"
-            value={formData.employee_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccionar empleado</option>
-            {employees.map((employee) => (
-              <option key={employee.id} value={employee.id}>
-                {employee.first_name} {employee.last_name} - DNI {employee.dni}
-              </option>
-            ))}
-          </select>
+        <form className="surface form-shell form-grid" onSubmit={handleSubmit}>
+          <label className="field field--full">
+            <span>Empleado</span>
+            <select name="employee_id" value={formData.employee_id} onChange={handleChange} required>
+              <option value="">Seleccionar empleado</option>
+              {employees.map((employee) => (
+                <option key={employee.id} value={employee.id}>
+                  {employee.first_name} {employee.last_name} - DNI {employee.dni}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span>Periodo</span>
+            <input name="period" type="month" value={formData.period} onChange={handleChange} required />
+          </label>
+          <label className="field">
+            <span>Sueldo bruto</span>
+            <input name="gross_salary" type="number" min="0" step="0.01" placeholder="Sueldo bruto" value={formData.gross_salary} onChange={handleChange} required />
+          </label>
+          <label className="field">
+            <span>Descuentos</span>
+            <input name="deductions" type="number" min="0" step="0.01" placeholder="Descuentos" value={formData.deductions} onChange={handleChange} required />
+          </label>
+          <label className="field">
+            <span>Bonificaciones</span>
+            <input name="bonuses" type="number" min="0" step="0.01" placeholder="Bonificaciones" value={formData.bonuses} onChange={handleChange} />
+          </label>
+          <label className="field">
+            <span>Horas extra</span>
+            <input name="extra_hours" type="number" min="0" step="0.01" placeholder="Horas extra" value={formData.extra_hours} onChange={handleChange} />
+          </label>
 
-          <input
-            name="period"
-            type="month"
-            value={formData.period}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            name="gross_salary"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Sueldo bruto"
-            value={formData.gross_salary}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            name="deductions"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Descuentos"
-            value={formData.deductions}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            name="bonuses"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Bonificaciones"
-            value={formData.bonuses}
-            onChange={handleChange}
-          />
-
-          <input
-            name="extra_hours"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Horas extra"
-            value={formData.extra_hours}
-            onChange={handleChange}
-          />
-
-          <button type="submit" disabled={isSubmitting}>
+          <button className="field--full" type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Guardando...' : 'Crear liquidacion'}
           </button>
         </form>

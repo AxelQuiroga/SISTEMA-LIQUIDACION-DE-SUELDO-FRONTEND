@@ -1,2 +1,19 @@
 :root {
+  --font-sans: "Segoe UI", "Aptos", "IBM Plex Sans", "Helvetica Neue", sans-serif;
+  --bg-accent:
+    radial-gradient(circle at top left, rgba(17, 78, 112, 0.12), transparent 30%),
+    linear-gradient(180deg, #f8fbfc 0%, #eef3f6 100%);
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: #ffffff;
+  --border: #d5dde3;
+  --text: #13232d;
+  --text-soft: #5f717c;
+  --text-inverse: #f7fafc;
+  --primary: #0f5c74;
+  --primary-strong: #0b4658;
+  --danger: #a83b32;
+  --shadow: 0 24px 60px rgba(16, 33, 43, 0.08);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --content-width: 1180px;
 }

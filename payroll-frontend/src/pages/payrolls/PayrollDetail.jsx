@@ -41,26 +41,35 @@ function PayrollDetail() {
   }, [payrollId]);
 
   if (isLoading) {
-    return <p>Cargando detalle de liquidacion...</p>;
+    return <p className="status status--info">Cargando detalle de liquidacion...</p>;
   }
 
   return (
-    <main>
-      <h1>Detalle de liquidacion</h1>
-      <Link to={PAYROLLS_ROUTE}>Volver al listado</Link>
+    <main className="page">
+      <section className="page-header">
+        <div>
+          <p className="eyebrow">Liquidaciones</p>
+          <h1>Detalle de liquidacion</h1>
+        </div>
+      </section>
+      <div className="page-actions">
+        <Link className="button-link button-link--ghost" to={PAYROLLS_ROUTE}>Volver al listado</Link>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <p className="status status--error">{error}</p>}
 
       {payroll && (
-        <section>
-          <p>ID: {payroll.id}</p>
-          <p>Empleado ID: {payroll.employee_id}</p>
-          <p>Periodo: {payroll.period}</p>
-          <p>Sueldo bruto: {formatCurrency(payroll.gross_salary)}</p>
-          <p>Descuentos: {formatCurrency(payroll.deductions)}</p>
-          <p>Sueldo neto: {formatCurrency(payroll.net_salary)}</p>
-          <p>Creado por usuario ID: {payroll.created_by}</p>
-          <p>Fecha de creacion: {formatDate(payroll.created_at)}</p>
+        <section className="surface detail-panel">
+          <div className="detail-grid">
+            <p><strong>ID:</strong> {payroll.id}</p>
+            <p><strong>Empleado ID:</strong> {payroll.employee_id}</p>
+            <p><strong>Periodo:</strong> {payroll.period}</p>
+            <p><strong>Sueldo bruto:</strong> {formatCurrency(payroll.gross_salary)}</p>
+            <p><strong>Descuentos:</strong> {formatCurrency(payroll.deductions)}</p>
+            <p><strong>Sueldo neto:</strong> {formatCurrency(payroll.net_salary)}</p>
+            <p><strong>Creado por usuario ID:</strong> {payroll.created_by}</p>
+            <p><strong>Fecha de creacion:</strong> {formatDate(payroll.created_at)}</p>
+          </div>
         </section>
       )}
     </main>

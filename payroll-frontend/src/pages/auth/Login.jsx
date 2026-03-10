@@ -33,31 +33,55 @@ function Login() {
   }
 
   return (
-    <div>
-      <h2>Login</h2>
+    <main className="auth-page">
+      <section className="auth-panel">
+        <div className="auth-panel__intro">
+          <p className="eyebrow">Gestion empresarial</p>
+          <h1>Liquidacion de sueldos</h1>
+          <p>
+            Accede al panel para administrar empleados, liquidaciones y recibos en una interfaz
+            limpia, clara y lista para escritorio y mobile.
+          </p>
+        </div>
 
-      {error && <p>{error}</p>}
+        <div className="surface auth-card">
+          <div className="page-header page-header--compact">
+            <div>
+              <p className="eyebrow">Ingreso</p>
+              <h2>Iniciar sesion</h2>
+            </div>
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          {error && <p className="status status--error">{error}</p>}
 
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <form className="form-grid" onSubmit={handleSubmit}>
+            <label className="field field--full">
+              <span>Email</span>
+              <input
+                type="email"
+                placeholder="admin@empresa.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
 
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Ingresando...' : 'Ingresar'}
-        </button>
-      </form>
-    </div>
+            <label className="field field--full">
+              <span>Contrasena</span>
+              <input
+                type="password"
+                placeholder="Tu contrasena"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+
+            <button className="field--full" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
   );
 }
 

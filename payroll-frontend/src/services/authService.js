@@ -55,9 +55,7 @@ export const clearSession = () => {
   localStorage.removeItem(USER_STORAGE_KEY);
 };
 
-export const getStoredToken = () => localStorage.getItem(TOKEN_STORAGE_KEY);
-
-export const getStoredUser = () => {
+const parseStoredUser = () => {
   const storedUser = localStorage.getItem(USER_STORAGE_KEY);
 
   if (!storedUser) {
@@ -71,3 +69,19 @@ export const getStoredUser = () => {
     return null;
   }
 };
+
+export const getStoredSession = () => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+  const user = parseStoredUser();
+
+  if (!token || !user) {
+    clearSession();
+    return { token: null, user: null };
+  }
+
+  return { token, user };
+};
+
+export const getStoredToken = () => getStoredSession().token;
+
+export const getStoredUser = () => getStoredSession().user;
