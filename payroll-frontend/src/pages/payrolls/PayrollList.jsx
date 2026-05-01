@@ -126,8 +126,8 @@ function PayrollList() {
               <div className="detail-grid">
                 <p><strong>Puesto:</strong> {payroll.position}</p>
                 <p><strong>Bruto:</strong> {formatCurrency(payroll.gross_salary)}</p>
-                <p><strong>Descuentos:</strong> {formatCurrency(payroll.deductions)}</p>
-                <p><strong>Neto:</strong> {formatCurrency(payroll.net_salary)}</p>
+                <p><strong>Descuentos:</strong> {formatCurrency(payroll.total_deductions)}</p>
+                <p><strong>Neto a Cobrar:</strong> {formatCurrency(payroll.net_salary)}</p>
               </div>
               <div className="inline-actions">
                 <Link className="button-link button-link--ghost" to={getPayrollDetailRoute(payroll.id)}>Ver detalle</Link>

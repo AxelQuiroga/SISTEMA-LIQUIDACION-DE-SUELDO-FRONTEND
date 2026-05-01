@@ -8,19 +8,19 @@ import { createPayroll } from '../../services/payrollService';
 const INITIAL_FORM = {
   employee_id: '',
   period: '',
-  gross_salary: '',
-  deductions: '',
-  bonuses: '',
-  extra_hours: ''
+  extra_hours_amount: '',
+  has_absences: false,
+  via: ''
 };
 
 const buildPayrollPayload = (formData) => ({
   employee_id: Number(formData.employee_id),
   period: formData.period,
-  gross_salary: Number(formData.gross_salary),
-  deductions: Number(formData.deductions || 0),
-  bonuses: Number(formData.bonuses || 0),
-  extra_hours: Number(formData.extra_hours || 0)
+  news: {
+    extra_hours_amount: Number(formData.extra_hours_amount || 0),
+    has_absences: formData.has_absences,
+    via: Number(formData.via || 0)
+  }
 });
 
 function PayrollForm() {
@@ -62,10 +62,10 @@ function PayrollForm() {
   }, []);
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setFormData((current) => ({
       ...current,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -118,29 +118,30 @@ function PayrollForm() {
               ))}
             </select>
           </label>
-          <label className="field">
+          <label className="field field--full">
             <span>Periodo</span>
             <input name="period" type="month" value={formData.period} onChange={handleChange} required />
           </label>
+          
+          <h3 className="field--full" style={{marginTop: '1rem', borderBottom: '1px solid #eee', paddingBottom: '0.5rem'}}>Novedades del Mes</h3>
+          
           <label className="field">
-            <span>Sueldo bruto</span>
-            <input name="gross_salary" type="number" min="0" step="0.01" placeholder="Sueldo bruto" value={formData.gross_salary} onChange={handleChange} required />
-          </label>
-          <label className="field">
-            <span>Descuentos</span>
-            <input name="deductions" type="number" min="0" step="0.01" placeholder="Descuentos" value={formData.deductions} onChange={handleChange} required />
-          </label>
-          <label className="field">
-            <span>Bonificaciones</span>
-            <input name="bonuses" type="number" min="0" step="0.01" placeholder="Bonificaciones" value={formData.bonuses} onChange={handleChange} />
-          </label>
-          <label className="field">
-            <span>Horas extra</span>
-            <input name="extra_hours" type="number" min="0" step="0.01" placeholder="Horas extra" value={formData.extra_hours} onChange={handleChange} />
+            <span>Monto Horas Extra</span>
+            <input name="extra_hours_amount" type="number" min="0" step="0.01" placeholder="0.00" value={formData.extra_hours_amount} onChange={handleChange} />
           </label>
 
-          <button className="field--full" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Guardando...' : 'Crear liquidacion'}
+          <label className="field">
+            <span>Viáticos (No Rem.)</span>
+            <input name="via" type="number" min="0" step="0.01" placeholder="0.00" value={formData.via} onChange={handleChange} />
+          </label>
+
+          <label className="field field--row field--full" style={{display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer'}}>
+            <input name="has_absences" type="checkbox" checked={formData.has_absences} onChange={handleChange} style={{width: 'auto'}} />
+            <span>¿Tuvo inasistencias? (Pierde presentismo)</span>
+          </label>
+
+          <button className="field--full" type="submit" disabled={isSubmitting} style={{marginTop: '1rem'}}>
+            {isSubmitting ? 'Calculando y Guardando...' : 'Liquidar Sueldo'}
           </button>
         </form>
       )}

@@ -60,16 +60,55 @@ function PayrollDetail() {
 
       {payroll && (
         <section className="surface detail-panel">
-          <div className="detail-grid">
+          <div className="detail-grid" style={{marginBottom: '2rem'}}>
             <p><strong>ID:</strong> {payroll.id}</p>
-            <p><strong>Empleado ID:</strong> {payroll.employee_id}</p>
+            <p><strong>Empleado:</strong> {payroll.employee_name || payroll.employee_id}</p>
             <p><strong>Periodo:</strong> {payroll.period}</p>
-            <p><strong>Sueldo bruto:</strong> {formatCurrency(payroll.gross_salary)}</p>
-            <p><strong>Descuentos:</strong> {formatCurrency(payroll.deductions)}</p>
-            <p><strong>Sueldo neto:</strong> {formatCurrency(payroll.net_salary)}</p>
-            <p><strong>Creado por usuario ID:</strong> {payroll.created_by}</p>
-            <p><strong>Fecha de creacion:</strong> {formatDate(payroll.created_at)}</p>
+            <p><strong>Creado el:</strong> {formatDate(payroll.created_at)}</p>
           </div>
+
+          <h3 style={{marginBottom: '1rem'}}>Detalle de Liquidación</h3>
+          <table className="data-table" style={{width: '100%', borderCollapse: 'collapse'}}>
+            <thead>
+              <tr style={{borderBottom: '2px solid #eee', textAlign: 'left'}}>
+                <th style={{padding: '10px'}}>Concepto</th>
+                <th style={{padding: '10px'}}>Base</th>
+                <th style={{padding: '10px', textAlign: 'right'}}>Haberes</th>
+                <th style={{padding: '10px', textAlign: 'right'}}>Deducciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payroll.items && payroll.items.map((item, index) => (
+                <tr key={index} style={{borderBottom: '1px solid #f9f9f9'}}>
+                  <td style={{padding: '10px'}}>
+                    {item.name}
+                    <br />
+                    <small style={{color: '#666', fontSize: '0.8rem'}}>{item.category === 'remunerative' ? 'Remunerativo' : item.category === 'non_remunerative' ? 'No Remunerativo' : 'Deducción'}</small>
+                  </td>
+                  <td style={{padding: '10px'}}>
+                    {item.base_amount ? formatCurrency(item.base_amount) : '-'}
+                  </td>
+                  <td style={{padding: '10px', textAlign: 'right', color: item.category === 'deduction' ? 'inherit' : '#2e7d32'}}>
+                    {item.category !== 'deduction' ? formatCurrency(item.amount) : ''}
+                  </td>
+                  <td style={{padding: '10px', textAlign: 'right', color: '#c62828'}}>
+                    {item.category === 'deduction' ? formatCurrency(item.amount) : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr style={{borderTop: '2px solid #eee', fontWeight: 'bold'}}>
+                <td colSpan="2" style={{padding: '10px', textAlign: 'right'}}>Subtotales:</td>
+                <td style={{padding: '10px', textAlign: 'right', color: '#2e7d32'}}>{formatCurrency(Number(payroll.gross_salary) + Number(payroll.total_non_remunerative))}</td>
+                <td style={{padding: '10px', textAlign: 'right', color: '#c62828'}}>{formatCurrency(payroll.total_deductions)}</td>
+              </tr>
+              <tr style={{backgroundColor: '#f5f5f5', fontSize: '1.2rem'}}>
+                <td colSpan="3" style={{padding: '15px', textAlign: 'right'}}>NETO A COBRAR:</td>
+                <td style={{padding: '15px', textAlign: 'right', color: '#1a237e'}}>{formatCurrency(payroll.net_salary)}</td>
+              </tr>
+            </tfoot>
+          </table>
         </section>
       )}
     </main>
